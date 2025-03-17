@@ -1,80 +1,84 @@
 <?php
-// Memasukkan file "datadummy.php" yang berisi data gedung
+
+// Memuat file yang berisi data gedung untuk digunakan dalam transaksi
 require "datadummy.php";
 
-// Memulai session untuk menyimpan data transaksi
+// Memulai sesi PHP untuk menyimpan dan mengakses data transaksi
 session_start();
 
-// Jika tidak ada data transaksi di dalam session, buat array kosong
+// Jika tidak ada data transaksi yang tersimpan dalam sesi, buat array kosong
 $_SESSION['transaksi'] = $_SESSION['transaksi'] ?? [];
 
-// Inisialisasi variabel untuk menyimpan pesan kesalahan dan total pembayaran
+// Membuat array kosong untuk menyimpan pesan kesalahan jika terjadi kesalahan input
 $errors = [];
+
+// Inisialisasi variabel total pembayaran dengan nilai awal 0
 $total = 0;
 
-// Jika tipe gedung belum dipilih, default ke tipe pertama dalam array gedung
-if (!isset($_POST['tipeGedung']) && isset($gedung[0]['nama'])) {
-    $selectedID = $gedung[0]['nama']; // Pilih tipe pertama (VIP)
-} else {
-    $selectedID = $_POST['tipeGedung'] ?? '';
-}
+// Menentukan tipe gedung yang dipilih berdasarkan input pengguna atau menggunakan tipe pertama secara default
+$selectedID = $_POST['tipeGedung'] ?? $gedung[0]['nama'];
 
-// Ambil harga berdasarkan tipe gedung yang dipilih
+// Mengambil harga gedung berdasarkan tipe yang dipilih atau memberikan nilai 0 jika tidak ditemukan
 $hargaGedung = array_column($gedung, 'harga', 'nama')[$selectedID] ?? 0;
 
-// Mengecek apakah ada request POST (saat form dikirimkan)
+// Memeriksa apakah formulir telah dikirim menggunakan metode POST
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    // Mengambil data dari form dan menyimpannya dalam array $data
-    $data = [
-        'nama' => $_POST['nama'] ?? '', // Nama penyewa
-        'jenisKelamin' => $_POST['jenisKelamin'] ?? '', // Jenis kelamin penyewa
-        'identitas' => $_POST['identitas'] ?? '', // Nomor identitas penyewa (misalnya KTP)
-        'tipeGedung' => $selectedID, // Tipe gedung yang dipilih
-        'tanggalPesan' => $_POST['tanggalPesan'] ?? '', // Tanggal pemesanan
-        'durasi' => $_POST['durasi'] ?? 0, // Durasi penyewaan dalam hari
-        'catering' => isset($_POST['catering']) ? 1200000 : 0 // Harga catering jika dipilih (1.200.000 per hari)
-    ];
+    // Mengambil input nama penyewa, jika kosong maka diisi string kosong
+    $nama = $_POST['nama'] ?? '';
     
-    // Validasi input durasi, harus lebih dari 0 dan angka
-    if (!is_numeric($data['durasi']) || $data['durasi'] <= 0) {
-        $errors[] = "Durasi harus lebih dari 0";
-    }
+    // Mengambil input jenis kelamin penyewa
+    $jenisKelamin = $_POST['jenisKelamin'] ?? '';
     
-    // Validasi nomor identitas, harus terdiri dari 16 digit angka
-    if (!is_numeric($data['identitas']) || strlen($data['identitas']) !== 16) {
-        $errors[] = "Nomor Identitas harus 16 digit angka";
-    }
+    // Mengambil input nomor identitas penyewa
+    $identitas = $_POST['identitas'] ?? '';
     
-    // Jika tidak ada error, hitung total harga
+    // Mengambil input tanggal pemesanan
+    $tanggalPesan = $_POST['tanggalPesan'] ?? '';
+    
+    // Mengambil input durasi penyewaan dan jika tidak diisi, maka default ke 0
+    $durasi = $_POST['durasi'] ?? 0;
+    
+    // Jika catering dipilih, biaya catering ditetapkan 1.200.000 per hari, jika tidak maka 0
+    $catering = isset($_POST['catering']) ? 1200000 : 0;
+
+    // Memvalidasi bahwa durasi harus berupa angka dan lebih dari 0
+    if (!is_numeric($durasi) || $durasi <= 0) $errors[] = "Durasi harus lebih dari 0";
+    
+    // Memvalidasi bahwa nomor identitas harus berupa angka dengan panjang 16 digit
+    if (!is_numeric($identitas) || strlen($identitas) !== 16) $errors[] = "Nomor Identitas harus 16 digit angka";
+
+    // Jika tidak ada error, lanjutkan perhitungan total pembayaran
     if (!$errors) {
-        // Menghitung total biaya berdasarkan durasi dan pilihan catering
-        $total = ($hargaGedung * $data['durasi']) + ($data['catering'] * $data['durasi']);
+        // Menghitung total biaya berdasarkan harga gedung, durasi, dan catering
+        $total = ($hargaGedung * $durasi) + ($catering * $durasi);
         
-        // Jika durasi sewa 3 hari atau lebih, berikan diskon 10%
-        if ($data['durasi'] >= 3) {
-            $total *= 0.9;
+        // Jika durasi penyewaan 3 hari atau lebih, diberikan diskon 10%
+        $diskon = ($durasi >= 3) ? '10%' : '0%';
+        if ($durasi >= 3) $total *= 0.9;
+
+        // Memeriksa apakah tombol 'simpan' ditekan sebelum menyimpan transaksi
+        if (isset($_POST['simpan'])) {
+            // Menyimpan transaksi ke dalam session dengan format array
+            $_SESSION['transaksi'][] = compact('nama', 'jenisKelamin', 'identitas', 'selectedID', 'tanggalPesan', 'durasi', 'catering', 'total');
+            
+            // Menampilkan pesan alert dengan detail transaksi
+            echo "<script>
+                alert('Pesanan Berhasil!\n\n' +
+                    'Nama: $nama\n' +
+                    'Nomor Identitas: $identitas\n' +
+                    'Jenis Kelamin: $jenisKelamin\n' +
+                    'Jenis Gedung: $selectedID\n' +
+                    'Catering: " . ($catering ? 'Ya' : 'Tidak') . "\n' +
+                    'Durasi: $durasi hari\n' +
+                    'Diskon: $diskon\n' +
+                    'Total Bayar: Rp ' + '" . number_format($total, 0, ',', '.') . "'
+                );
+                window.location.href = 'index.php';
+            </script>";
+            
+            // Menghentikan eksekusi script setelah redirect untuk mencegah eksekusi kode lebih lanjut
+            exit();
         }
-    }
-
-    // Jika tombol "simpan" ditekan dan tidak ada error
-    if (isset($_POST['simpan']) && !$errors) {
-        // Menyimpan transaksi ke dalam session, termasuk total bayar yang sudah diformat
-        $_SESSION['transaksi'][] = array_merge($data, ['totalBayar' => number_format($total, 0, ',', '.')]);
-
-        // Menampilkan alert JavaScript dengan detail transaksi, lalu kembali ke halaman utama
-        echo "<script>
-            alert('Pesanan Berhasil!\\n\\n" . 
-                "Nama: {$data['nama']}\\n" . 
-                "Nomor Identitas: {$data['identitas']}\\n" . 
-                "Jenis Kelamin: {$data['jenisKelamin']}\\n" . 
-                "Jenis Gedung: {$data['tipeGedung']}\\n" . 
-                "Catering: " . ($data['catering'] ? 'Ya' : 'Tidak') . "\\n" . 
-                "Durasi: {$data['durasi']} hari\\n" . 
-                "Diskon: " . ($data['durasi'] >= 3 ? '10%' : '0%') . "\\n" . 
-                "Total Bayar: Rp " . number_format($total, 0, ',', '.') . "');
-            window.location.href = 'index.php';
-        </script>";
-        exit(); // Menghentikan eksekusi script setelah redirect
     }
 }
 ?>
