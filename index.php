@@ -1,100 +1,149 @@
-<?php 
-// Mengimpor file datadummy.php yang berisi data gedung
-require "datadummy.php"; 
+<?php
+    $gedung = [
+        ["VIP", 500000, "vip.jpeg"],
+        ["Ballroom", 700000, "ballroom.jpg"],
+        ["Outdoor", 400000, "outdoor.jpg"]
+    ];
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gedung Lima Rasa</title>
-    <!-- Mengimpor CSS Bootstrap untuk tampilan yang lebih baik -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Poppins', sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .navbar-nav .nav-link {
+            color: white;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #b0c4de;
+        }
+        .welcome-section {
+            text-align: center;
+            padding: 50px 0;
+        }
+        .welcome-section img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .product-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            background: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease-in-out;
+        }
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+        .product-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #182848, #4b6cb7);
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            border-radius: 30px;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+        }
+        footer {
+            background: #182848;
+            color: white;
+            padding: 20px 0;
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <!-- Navigasi -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">Gedung Lima Rasa</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <a class="navbar-brand" href="#">Gedung Lima Rasa</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#produk">Produk</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#tentang">Tentang Kami</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#produk">Jenis Gedung</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tentang">Tentang Kami</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
     
-    <!-- Bagian Selamat Datang -->
-    <section class="text-center py-5">
-        <div class="container">
-            <h1 class="fw-bold">Selamat Datang di Gedung Lima Rasa</h1>
-            <p class="lead">Kami menyediakan berbagai macam jenis gedung seperti VIP, Ballroom, dan Outdoor.</p>
-            <!-- Tombol Pesan Sekarang -->
-            <div class="text-center py-4">
-                <a href="form_transaksi.php" class="btn btn-primary btn-lg">Pesan Sekarang</a>
-            </div>
-            <img src="img/logo.png" alt="logo" class="py-4">
+    <div class="container mt-5">
+        <div class="welcome-section">
+            <h1 class="text-primary">Selamat Datang di Gedung Lima Rasa</h1>
+            <img src="img/logo.png" alt="Selamat Datang">
         </div>
-    </section>
-
-    <!-- Bagian Produk -->
-    <section id="produk" class="py-5">
-        <div class="container text-center">
-            <h2 class="fw-bold mb-4">Jenis Gedung Yang Tersedia</h2>
+    </div>
+    
+    <div class="container mt-5">
+        <section id="produk">
+            <h2 class="text-center mb-4 text-primary">Jenis Gedung</h2>
             <div class="row">
-                <?php foreach ($gedung as $g) : ?>
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 d-flex flex-column">
-                            <!-- Menampilkan gambar gedung -->
-                            <img src="img/<?= $g['gambar']; ?>" class="card-img-top" alt="<?= $g['nama']; ?>">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title"> <?= $g['nama']; ?> </h5>
-                                <p class="card-text"> <?= $g['deskripsi']; ?> </p>
-                                <p class="fw-bold text-primary mt-auto">Rp <?= number_format($g['harga'], 0, ',', '.'); ?></p>
-                            </div>
+                <?php foreach ($gedung as $g): ?>
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <img src="img/<?= $g[2]; ?>" alt="<?= $g[0]; ?>">
+                            <h5 class="mt-3"><?= $g[0]; ?></h5>
+                            <h5 class="text-success">Rp <?= number_format($g[1], 0, ',', '.'); ?></h5>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
-        </div>
-    </section>
-
-    <!-- Video Cuplikan Gedung -->
-    <section class="py-5 bg-white text-center">
-        <div class="container">
-            <h2 class="fw-bold mb-4">Ini Cuplikan Video Gedungnya.</h2>
-            <!-- Menampilkan video dari file lokal dengan ukuran lebih kecil -->
-            <video controls width="600">
-                <source src="video/contoh.mp4" type="video/mp4">
-                Browser Anda tidak mendukung pemutaran video.
-            </video>
-        </div>
-    </section>
-
-    <!-- Bagian Tentang Kami -->
-    <section id="tentang" class="py-5 bg-white text-center">
-        <div class="container">
-            <h2 class="fw-bold mb-4">Tentang Kami</h2>
-            <p>Gedung Lima Rasa menyediakan layanan sewa gedung yang nyaman dan mewah dengan harga terbaik.</p>
-            <ul class="list-unstyled">
-                <li>Alamat: Jl. A.Yani KM 5 No. 112, Banjarmasin</li>
-                <li>Telepon: +62 21 1234 5678</li>
-                <li>Email: gedunglimarasa@gmail.com</li>
-            </ul>
-        </div>
-    </section>
+        </section>
+    </div>
     
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3">
-        <p class="mb-0">&copy; 2025 Gedung Lima Rasa. All Rights Reserved.</p>
+    <div class="pesan-btn-container text-center mt-4">
+        <a href="form_transaksi.php" class="btn btn-primary">Pesan Sekarang</a>
+    </div>
+    
+    <div class="container mt-5">
+        <section id="tentang">
+            <div class="card text-center p-4">
+                <h2 class="text-primary">Tentang Kami</h2>
+                <p class="text-muted">Gedung Lima Rasa adalah tempat ideal untuk berbagai acara spesial Anda. Kami menawarkan gedung dengan fasilitas terbaik, harga terjangkau, dan layanan profesional.</p>
+                <p><strong>📍 Alamat:</strong> Jalan Flamboyan III</p>
+                <p><strong>📞 Telepon:</strong> <a href="tel:+62895383875089" class="text-decoration-none text-primary">+62895383875089</a></p>
+                <p><strong>📧 Email:</strong> <a href="mailto:info@gedunglimarasa.com" class="text-decoration-none text-primary">info@gedunglimarasa.com</a></p>
+                <div class="mt-3">
+                    <h4 class="text-primary">Video Profil Kami</h4>
+                    <div class="ratio ratio-16x9">
+                        <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <footer class="text-center mt-5">
+        <p class="mb-0">&copy; 2025 Gedung Lima Rasa. Semua Hak Cipta Dilindungi.</p>
     </footer>
     
-    <!-- Mengimpor JavaScript Bootstrap untuk interaktivitas -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
