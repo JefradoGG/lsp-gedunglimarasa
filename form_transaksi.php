@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $catering = isset($_POST['catering']) ? 1200000 : 0;
 
     // Memvalidasi bahwa durasi harus berupa angka dan lebih dari 0
-    if (!is_numeric($durasi) || $durasi <= 0) $errors[] = "Durasi harus lebih dari 0";
+    if (!is_numeric($durasi) || $durasi <= 0) $errors[] = "Durasi harus lebih dari 0 dan harus angka";
     
     // Memvalidasi bahwa nomor identitas harus berupa angka dengan panjang 16 digit
     if (!is_numeric($identitas) || strlen($identitas) !== 16) $errors[] = "Nomor Identitas harus 16 digit angka";
@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                     </select>
                     <input type="text" class="form-control mb-3" value="<?= 'Rp ' . number_format($hargaGedung, 0, ',', '.') ?>" readonly>
                     <input type="date" class="form-control mb-3" name="tanggalPesan" value="<?= $_POST['tanggalPesan'] ?? '' ?>" required>
-                    <input type="number" class="form-control mb-3" name="durasi" placeholder="Durasi Sewa (hari)" value="<?= $_POST['durasi'] ?? '' ?>" required>
+                    <input type="text" class="form-control mb-3" name="durasi" placeholder="Durasi Sewa (hari)" value="<?= $_POST['durasi'] ?? '' ?>" required>
                     <div class="mb-3">
                         <input class="form-check-input" type="checkbox" name="catering" value="1200000" <?= isset($_POST['catering']) ? 'checked' : '' ?>> Termasuk Catering (Rp 1.200.000/hari)
                     </div>
