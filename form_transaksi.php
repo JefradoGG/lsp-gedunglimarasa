@@ -56,28 +56,37 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $diskon = ($durasi >= 3) ? '10%' : '0%';
         if ($durasi >= 3) $total *= 0.9;
 
-        // Memeriksa apakah tombol 'simpan' ditekan sebelum menyimpan transaksi
-        if (isset($_POST['simpan'])) {
-            // Menyimpan transaksi ke dalam session dengan format array
-            $_SESSION['transaksi'][] = compact('nama', 'jenisKelamin', 'identitas', 'selectedID', 'tanggalPesan', 'durasi', 'catering', 'total');
-            
-            // Menampilkan pesan alert dengan detail transaksi
+        if (isset($_POST['simpan'])) { // Mengecek apakah tombol "Simpan" telah ditekan
+            $nama = $_POST['nama']; // Mengambil input nama dari form
+            $identitas = $_POST['identitas']; // Mengambil input nomor identitas dari form
+            $jenisKelamin = $_POST['jenisKelamin']; // Mengambil input jenis kelamin dari form
+            $selectedID = $_POST['tipeGedung']; // Mengambil tipe gedung yang dipilih dari form
+            $check = $catering ? 'Ya' : 'Tidak'; // Mengecek apakah pengguna memilih opsi catering
+        
+            // Membuat array untuk menyimpan detail pesanan
+            $pesanan = [
+                "Nama" => $nama,
+                "Nomor Identitas" => $identitas,
+                "Jenis Kelamin" => $jenisKelamin,
+                "Tipe Gedung" => $selectedID,
+                "Catering" => $check,
+                "Durasi" => $durasi,
+                "Diskon" => $diskon,
+                "Total Bayar" => number_format($total, 0, ',', '.') // Format angka untuk tampilan lebih rapi
+            ];
+        
+            // Membuat string detail pesanan untuk ditampilkan dalam alert
+            $detail_pesanan = "Pesanan Berhasil!\n\n";
+            foreach ($pesanan as $key => $value) { // Looping untuk menyusun detail pesanan
+                $detail_pesanan .= "$key: $value\n"; // Menambahkan setiap item pesanan ke dalam string
+            }
+        
+            // Menampilkan alert dengan detail pesanan dan mengarahkan kembali ke halaman utama
             echo "<script>
-                alert('Pesanan Berhasil!\n\n' +
-                    'Nama: $nama\n' +
-                    'Nomor Identitas: $identitas\n' +
-                    'Jenis Kelamin: $jenisKelamin\n' +
-                    'Jenis Gedung: $selectedID\n' +
-                    'Catering: " . ($catering ? 'Ya' : 'Tidak') . "\n' +
-                    'Durasi: $durasi hari\n' +
-                    'Diskon: $diskon\n' +
-                    'Total Bayar: Rp ' + '" . number_format($total, 0, ',', '.') . "'
-                );
+                alert(`$detail_pesanan`);
                 window.location.href = 'index.php';
             </script>";
-            
-            // Menghentikan eksekusi script setelah redirect untuk mencegah eksekusi kode lebih lanjut
-            exit();
+            exit(); // Menghentikan eksekusi kode setelah redirect
         }
     }
 }

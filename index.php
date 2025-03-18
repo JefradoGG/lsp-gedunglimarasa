@@ -64,6 +64,18 @@ require "datadummy.php";
         </div>
     </section>
 
+    <!-- Video Cuplikan Gedung -->
+    <section class="py-5 bg-white text-center">
+        <div class="container">
+            <h2 class="fw-bold mb-4">Ini Cuplikan Video Gedungnya.</h2>
+            <!-- Menampilkan video dari file lokal dengan ukuran lebih kecil -->
+            <video controls width="600">
+                <source src="video/contoh.mp4" type="video/mp4">
+                Browser Anda tidak mendukung pemutaran video.
+            </video>
+        </div>
+    </section>
+
     <!-- Bagian Tentang Kami -->
     <section id="tentang" class="py-5 bg-white text-center">
         <div class="container">
